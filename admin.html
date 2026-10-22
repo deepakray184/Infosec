@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111a18" />
+  <title>Northstar Cyber · Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <main id="login-view" class="login-shell">
+    <div class="login-card">
+      <a class="brand" href="/"><span class="brand-mark">✳</span><span>NORTHSTAR <i>CYBER</i></span></a>
+      <p class="eyebrow">SITE ADMINISTRATION</p>
+      <h1>Welcome back.</h1>
+      <p class="login-intro">Sign in to manage site content and review anonymous traffic totals.</p>
+      <form id="login-form">
+        <label>Admin password<input type="password" name="password" autocomplete="current-password" required /></label>
+        <button type="submit" class="button">Sign in <span>↗</span></button>
+        <p class="form-message" id="login-message" aria-live="polite"></p>
+      </form>
+      <small>Admin access is private. There is no public account registration.</small>
+    </div>
+  </main>
+  <div id="admin-view" class="admin-shell" hidden>
+    <aside class="sidebar">
+      <a class="brand" href="/"><span class="brand-mark">✳</span><span>NORTHSTAR <i>CYBER</i></span></a>
+      <div class="workspace"><span class="workspace-icon">N</span><div><b>Northstar Cyber</b><small>Website workspace</small></div></div>
+      <nav aria-label="Admin navigation"><button class="side-link is-active" data-view="overview"><span>◫</span> Traffic overview</button><button class="side-link" data-view="content"><span>✎</span> Edit site content</button><a class="side-link" href="/" target="_blank" rel="noreferrer"><span>↗</span> View live site</a></nav>
+      <div class="sidebar-bottom"><div class="privacy-pill"><span>●</span><div><b>Privacy-conscious analytics</b><small>No visitor profiles stored</small></div></div><button id="logout-button" class="logout-button">Sign out <span>↗</span></button></div>
+    </aside>
+    <main class="admin-main">
+      <header class="topbar"><div><span class="eyebrow">WEBSITE CONTROL CENTER</span><h1 id="page-title">Traffic overview</h1></div><div class="topbar-actions"><span class="secure-label"><i></i> Secure admin session</span><button class="avatar" aria-label="Administrator">A</button></div></header>
+      <section id="overview-view" class="content-view">
+        <div class="welcome-row"><div><h2>Understand how visitors engage.</h2><p>Traffic is grouped by day and page. This dashboard does not identify individual visitors.</p></div><label class="range-select">DATE RANGE<select id="date-range"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select></label></div>
+        <div class="metric-grid"><article class="metric-card"><span>PAGE VIEWS <i>↗</i></span><strong id="metric-views">—</strong><small>Selected period</small><div class="metric-spark spark-mint"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article><article class="metric-card"><span>CTA CLICKS <i>↗</i></span><strong id="metric-ctas">—</strong><small>Contact and service links</small><div class="metric-spark spark-blue"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article><article class="metric-card"><span>TOP PAGE <i>↗</i></span><strong id="metric-top-page">—</strong><small id="metric-top-page-count">Page views</small><div class="metric-spark spark-gold"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article></div>
+        <section class="panel traffic-panel"><div class="panel-heading"><div><span class="eyebrow">ENGAGEMENT</span><h2>Daily activity</h2></div><span class="legend"><i></i> Page views <b></b> CTA clicks</span></div><div class="chart" id="traffic-chart" role="img" aria-label="Daily page views and CTA clicks"></div><div class="chart-axis"><span id="chart-start">—</span><span>DAILY TOTALS</span><span id="chart-end">—</span></div></section>
+        <div class="lower-grid"><section class="panel"><div class="panel-heading"><div><span class="eyebrow">POPULAR CONTENT</span><h2>Top pages</h2></div></div><div class="page-table" id="top-pages"></div></section><section class="panel data-note"><span class="note-icon">✳</span><h2>Simple, anonymous counts.</h2><p>We record only daily page-view and CTA-click totals by page. No IP addresses, cookies, referrers, or visitor-level profiles are saved in analytics.</p><p>Keep your privacy notice aligned with the analytics used on your deployed site.</p><a href="/" target="_blank" rel="noreferrer">Open the website <span>↗</span></a></section></div>
+        <p class="dashboard-footnote" id="analytics-status">Traffic tracking begins after this site is served by the Node app. Opening the HTML file directly will not send analytics.</p>
+      </section>
+      <section id="content-view" class="content-view" hidden>
+        <div class="welcome-row"><div><h2>Update the words customers see.</h2><p>Save changes to update the public website. You can preview them immediately.</p></div><a class="preview-link" href="/" target="_blank" rel="noreferrer">Preview website ↗</a></div>
+        <form id="content-form" class="panel content-form">
+          <div class="editor-section"><span class="eyebrow">01 — BRAND &amp; HERO</span><div class="field-grid"><label>Company name<input name="brandName" maxlength="45" required /></label><label>Hero headline · first line<input name="heroLine1" maxlength="70" required /></label><label>Hero headline · second line<input name="heroLine2" maxlength="70" required /></label><label class="span-all">Hero introduction<textarea name="heroCopy" rows="3" maxlength="260" required></textarea></label></div></div>
+          <div class="editor-section"><span class="eyebrow">02 — SERVICES &amp; TRAINING</span><div class="field-grid"><label class="span-all">Managed SOC summary<textarea name="socSummary" rows="3" maxlength="260" required></textarea></label><label class="span-all">Managed SOC services · one per line<textarea name="socServices" rows="8" maxlength="1200" required></textarea><small>Each line becomes a service item in the SOC tab.</small></label><label class="span-all">Student training introduction<textarea name="trainingCopy" rows="3" maxlength="260" required></textarea></label></div></div>
+          <div class="editor-section"><span class="eyebrow">03 — CONTACT</span><div class="field-grid"><label>Contact email<input type="email" name="contactEmail" maxlength="120" required /></label></div></div>
+          <div class="save-row"><p id="content-message" aria-live="polite">Changes save to the site content file.</p><button type="submit" class="button">Save changes <span>↗</span></button></div>
+        </form>
+      </section>
+    </main>
+  </div>
+  <script src="admin.js"></script>
+</body>
+</html>
