@@ -16,7 +16,7 @@ form?.addEventListener('submit', (event) => {
   const subject = encodeURIComponent(`Security consultation: ${data.get('service')}`);
   const body = encodeURIComponent(`Name: ${data.get('name')}\nEmail: ${data.get('email')}\nService: ${data.get('service')}\n\n${data.get('message') || ''}`);
   const mailto = `mailto:${managedContactEmail}?subject=${subject}&body=${body}`;
-  document.querySelector('#form-note').textContent = 'Your email app will open with your request ready to send. Replace the sample email address before launch.';
+  document.querySelector('#form-note').textContent = 'Your email app will open with your request addressed to the contact email shown on this site. Review it, then send.';
   window.location.href = mailto;
 });
 const serviceTabs = [...document.querySelectorAll('[data-service-tab]')];
@@ -62,11 +62,12 @@ if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-mot
   }, { threshold: 0.12, rootMargin: '0px 0px -35px 0px' });
   revealTargets.forEach((element) => revealObserver.observe(element));
 }
-let managedContactEmail = 'hello@northstarcyber.example';
+let managedContactEmail = 'deepak.ray184@outlook.com';
 const isServedOverHttp = location.protocol === 'http:' || location.protocol === 'https:';
 const sendTrafficEvent = (eventName) => {
   if (!isServedOverHttp || navigator.doNotTrack === '1') return;
-  const event = JSON.stringify({ event: eventName, page: location.pathname });
+  const pagePath = location.pathname === '/index.html' ? '/' : location.pathname;
+  const event = JSON.stringify({ event: eventName, page: pagePath });
   if (navigator.sendBeacon) navigator.sendBeacon('/api/track', new Blob([event], { type: 'application/json' }));
   else fetch('/api/track', { method: 'POST', headers: {'Content-Type':'application/json'}, body: event, keepalive: true }).catch(() => {});
 };
@@ -93,6 +94,6 @@ if (isServedOverHttp) {
   }).catch(() => {});
   sendTrafficEvent('page_view');
   document.addEventListener('click', (event) => {
-    if (event.target.closest('a[href="#contact"]')) sendTrafficEvent('cta_click');
+    if (event.target.closest('a[href="#contact"], a[href="#services"], a[href="#training"], .nav-cta, .button')) sendTrafficEvent('cta_click');
   });
 }

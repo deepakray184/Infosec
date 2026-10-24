@@ -31,7 +31,8 @@ async function loadAnalytics() {
   document.querySelector('#chart-end').textContent = data.days.at(-1)?.label || '—';
   const chart = document.querySelector('#traffic-chart');
   chart.replaceChildren();
-  const max = Math.max(1, ...data.days.map((day) => day.pageViews));
+  chart.style.gridTemplateColumns = `repeat(${data.days.length}, 1fr)`;
+  const max = Math.max(1, ...data.days.map((day) => Math.max(day.pageViews, day.ctaClicks)));
   data.days.forEach((day) => {
     const col = document.createElement('div');
     col.className = 'chart-day';

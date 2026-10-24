@@ -30,7 +30,7 @@ const DEFAULT_CONTENT = {
     'Vulnerability prioritization and risk reporting'
   ],
   trainingCopy: 'Hands-on learning paths for students exploring security operations and penetration testing. Practice uses controlled labs and explicitly authorized environments.',
-  contactEmail: 'hello@northstarcyber.example'
+  contactEmail: 'deepak.ray184@outlook.com'
 };
 const CONTENT_LIMITS = { brandName: 45, heroLine1: 70, heroLine2: 70, heroCopy: 260, socSummary: 260, trainingCopy: 260, contactEmail: 120 };
 const sessions = new Map();
@@ -46,14 +46,18 @@ if (!fs.existsSync(CONTENT_FILE)) atomicWrite(CONTENT_FILE, DEFAULT_CONTENT);
 if (!fs.existsSync(ANALYTICS_FILE)) atomicWrite(ANALYTICS_FILE, {});
 
 function atomicWrite(file, value) {
-  const temp = `${file}.${process.pid}.tmp`;
+  const temp = `${file}.${process.pid}.${crypto.randomBytes(6).toString('hex')}.tmp`;
   fs.writeFileSync(temp, JSON.stringify(value, null, 2), { mode: 0o600 });
   fs.renameSync(temp, file);
 }
 function readJson(file, fallback) {
-  try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return fallback; }
+  try {
+    const val = JSON.parse(fs.readFileSync(file, 'utf8'));
+    return (val && typeof val === 'object') ? val : fallback;
+  } catch { return fallback; }
 }
 function cleanAnalytics(data) {
+  if (!data || typeof data !== 'object') return {};
   const cutoff = new Date(); cutoff.setUTCDate(cutoff.getUTCDate() - ANALYTICS_RETENTION_DAYS);
   const cutoffKey = cutoff.toISOString().slice(0, 10);
   for (const date of Object.keys(data)) if (date < cutoffKey) delete data[date];
@@ -96,7 +100,11 @@ function cookies(req) {
   const out = {};
   for (const piece of (req.headers.cookie || '').split(';')) {
     const index = piece.indexOf('=');
-    if (index > 0) out[piece.slice(0, index).trim()] = decodeURIComponent(piece.slice(index + 1).trim());
+    if (index > 0) {
+      const key = piece.slice(0, index).trim();
+      const val = piece.slice(index + 1).trim();
+      try { out[key] = decodeURIComponent(val); } catch { out[key] = val; }
+    }
   }
   return out;
 }
@@ -168,6 +176,14 @@ async function handle(req, res) {
   try { pathname = decodeURIComponent(new URL(req.url, `http://${req.headers.host || 'localhost'}`).pathname); }
   catch { return json(res, 400, { error: 'Invalid URL.' }); }
 
+  if (pathname === '/favicon.ico') {
+    res.writeHead(204);
+    return res.end();
+  }
+  if (pathname === '/admin/') {
+    res.writeHead(301, { Location: '/admin' });
+    return res.end();
+  }
   if (pathname === '/api/content' && req.method === 'GET') {
     return json(res, 200, publicContent(readJson(CONTENT_FILE, DEFAULT_CONTENT)), { 'Cache-Control': 'no-cache' });
   }
@@ -179,7 +195,7 @@ async function handle(req, res) {
     try {
       const body = await readBody(req, 2048);
       const event = body.event;
-      const page = typeof body.page === 'string' && /^\/[a-zA-Z0-9/_-]{0,100}$/.test(body.page) ? body.page : null;
+      const page = typeof body.page === 'string' && /^\/[a-zA-Z0-9/_.-]{0,100}$/.test(body.page) ? body.page : null;
       if (!page || !['page_view', 'cta_click'].includes(event)) return json(res, 400, { error: 'Invalid analytics event.' });
       const data = cleanAnalytics(readJson(ANALYTICS_FILE, {}));
       const date = new Date().toISOString().slice(0, 10);
@@ -230,7 +246,7 @@ async function handle(req, res) {
   }
 
   let relative = pathname === '/' ? 'index.html' : pathname.slice(1);
-  if (pathname === '/admin' || pathname === '/admin/') relative = 'admin.html';
+  if (pathname === '/admin') relative = 'admin.html';
   const file = path.resolve(ROOT, relative);
   if (!file.startsWith(ROOT + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) return send(res, 404, 'Not found.', { 'Content-Type': 'text/plain; charset=utf-8' });
   const ext = path.extname(file).toLowerCase();
