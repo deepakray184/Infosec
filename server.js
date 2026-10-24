@@ -247,6 +247,8 @@ async function handle(req, res) {
 
   let relative = pathname === '/' ? 'index.html' : pathname.slice(1);
   if (pathname === '/admin') relative = 'admin.html';
+  if (pathname === '/admin/admin.css') relative = 'admin.css';
+  if (pathname === '/admin/admin.js') relative = 'admin.js';
   const file = path.resolve(ROOT, relative);
   if (!file.startsWith(ROOT + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) return send(res, 404, 'Not found.', { 'Content-Type': 'text/plain; charset=utf-8' });
   const ext = path.extname(file).toLowerCase();
